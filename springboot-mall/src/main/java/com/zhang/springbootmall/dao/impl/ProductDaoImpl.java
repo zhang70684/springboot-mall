@@ -47,43 +47,59 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Integer createProduct(ProductRequest productRequest) {
-        String sql = "INSERT INTO product (" +
-                "product_name," +
-                " category," +
-                " image_url," +
-                " price," +
-                " stock," +
-                " description," +
-                " created_date," +
-                " last_modified_date)" +
-                " VALUES (" +
-                " :productName," +
-                " :category," +
-                " :imageUrl," +
-                " :price," +
-                " :stock," +
-                " :description," +
-                " :createdDate," +
-                " :lastModifiedDate)";
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("productName",productRequest.getProductName());
-        map.put("category",productRequest.getCategory().toString());
-        map.put("imageUrl",productRequest.getImageUrl());
-        map.put("price",productRequest.getPrice());
-        map.put("stock",productRequest.getStock());
-        map.put("description",productRequest.getDescription());
+        // 檢查 productName 是否已存在
+        String checkSql = "SELECT COUNT(*) FROM product WHERE product_name = :productName";
+        Map<String, Object> checkMap = new HashMap<>();
+        checkMap.put("productName", productRequest.getProductName());
 
-        Date now = new Date();
-        map.put("createdDate",now);
-        map.put("lastModifiedDate",now);
+        // 查詢結果
+        int count = namedParameterJdbcTemplate.queryForObject(checkSql, checkMap, Integer.class);
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        // 如果 count 大於 0，則表示 productName 已存在，拋出異常
+        if (count > 0) {
+            throw new IllegalArgumentException("商品重複(productName): " + productRequest.getProductName());
+        }else{
+            String sql = "INSERT INTO product (" +
+                    "product_name," +
+                    " category," +
+                    " image_url," +
+                    " price," +
+                    " stock," +
+                    " description," +
+                    " created_date," +
+                    " last_modified_date)" +
+                    " VALUES (" +
+                    " :productName," +
+                    " :category," +
+                    " :imageUrl," +
+                    " :price," +
+                    " :stock," +
+                    " :description," +
+                    " :createdDate," +
+                    " :lastModifiedDate)";
 
-        namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map),keyHolder);
+            Map<String,Object> map = new HashMap<>();
+            map.put("productName",productRequest.getProductName());
+            map.put("category",productRequest.getCategory().toString());
+            map.put("imageUrl",productRequest.getImageUrl());
+            map.put("price",productRequest.getPrice());
+            map.put("stock",productRequest.getStock());
+            map.put("description",productRequest.getDescription());
 
-        int productId = keyHolder.getKey().intValue();
+            Date now = new Date();
+            map.put("createdDate",now);
+            map.put("lastModifiedDate",now);
 
-        return productId;
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map),keyHolder);
+
+            int productId = keyHolder.getKey().intValue();
+
+            return productId;
+        }
     }
+
+
 }
