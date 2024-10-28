@@ -39,15 +39,20 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
+        //查詢條件
         if(productQueryParams.getCategory() != null){
             sql += " AND category = :category";
             map.put("category",productQueryParams.getCategory().name()); //Enum to String
         }
 
+        //查詢條件
         if(productQueryParams.getSearch() != null){
             sql += " AND product_name LIKE :search";
             map.put("search","%" + productQueryParams.getSearch() + "%");
         }
+
+        //排序
+        sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql,map,new ProductRowMapper());
 
