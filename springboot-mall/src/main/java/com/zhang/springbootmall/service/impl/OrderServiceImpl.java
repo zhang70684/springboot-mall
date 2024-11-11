@@ -65,6 +65,17 @@ public class OrderServiceImpl implements OrderService {
 
             Product product = productDao.getProductById(buyItem.getProductId());
 
+            //檢查 product 是否存在
+            if(product == null){
+                log.warn("商品{}不存在",buyItem.getProductId());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }else if(product.getStock() < buyItem.getQuantity()){
+                log.warn("商品{}庫存數量不足，無法購買，剩餘庫存{}，欲購買數量{}",buyItem.getProductId(),product.getStock(),buyItem.getQuantity());
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+            //扣除商品庫存
+            productDao.updateStock(product.getProductId(),product.getStock() - buyItem.getQuantity());
+
             //計算總價錢
             int amount = buyItem.getQuantity() * product.getPrice();
             totalAmount += amount;
