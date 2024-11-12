@@ -1,11 +1,8 @@
 package com.zhang.springbootmall.controller;
 
-import com.zhang.springbootmall.constant.ProductCategory;
 import com.zhang.springbootmall.dto.CreateOrderRequest;
 import com.zhang.springbootmall.dto.OrderQueryParams;
-import com.zhang.springbootmall.dto.ProductQueryParams;
 import com.zhang.springbootmall.model.Order;
-import com.zhang.springbootmall.model.Product;
 import com.zhang.springbootmall.service.OrderService;
 import com.zhang.springbootmall.util.Page;
 import jakarta.validation.Valid;
@@ -62,7 +59,7 @@ public class OrderController {
 
         Order order = orderService.getOrderById(orderId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
 }

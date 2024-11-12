@@ -11,7 +11,7 @@ public class Order {
     private Date createdDate;
     private Date lastModifiedDate;
 
-    private List<OrderItem> ordetItemList;
+    private List<OrderItem> orderItemList;
 
     public Integer getOrderId() {
         return orderId;
@@ -53,11 +53,11 @@ public class Order {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public List<OrderItem> getOrdetItemList() {
-        return ordetItemList;
+    public List<OrderItem> getOrderItemList() {
+        return orderItemList;
     }
 
-    public void setOrdetItemList(List<OrderItem> ordetItemList) {
-        this.ordetItemList = ordetItemList;
+    public void setOrderItemList(List<OrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
     }
 }
